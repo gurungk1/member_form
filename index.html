@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Management Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 2.5px solid #548242;
+            border-radius:20px;
+          
+
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .checkbox-inline {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        button {
+            display: block;
+            margin: 20px auto; /* This will center the button */
+            padding: 10px 20px;
+            background-color: #2d732f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            
+        }
+        button:hover {
+            background-color: #3cb63c;
+
+        }
+        img {
+            display: block;
+            margin: 0 auto 50px;
+            max-width: 200px;
+
+        }
+
+        form {
+            background-color: #dcdfd9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h2 {
+        text-align: center;
+        font-family: 'Times New Roman', Times, serif;
+        margin-top: 0;
+        color: #3c8722;
+        }
+
+        .checkbox-section {
+        margin-bottom: 20px;
+        }
+        .checkbox-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        }
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px; 
+            margin-right: 10px; 
+        }
+        .notes-section {
+        margin-top: 20px; 
+        }
+    </style>
+</head>
+<body>
+<img src="https://njbg.org/wp-content/uploads/2019/01/cropped-njbg-logo.png" alt="NJBG Logo" />
+
+<h2>Membership Management Form</h2>
+
+<form action="https://<your-api-id>.execute-api.<region>.amazonaws.com/prod/submitForm" method="POST">
+
+    <!-- Membership Information -->
+    <label for="memberID">Member ID</label>
+    <input type="text" id="memberID" name="memberID" placeholder="Auto-generated or Enter ID" disabled>
+
+    <label for="renewalDate">Renewal Date</label>
+    <input type="date" id="renewalDate" name="renewalDate" required>
+
+    <label for="membershipType">Membership Type</label>
+    <select id="membershipType" name="membershipType" required>
+        <option value="">--Select--</option>
+        <option value="Individual">Individual</option>
+        <option value="Family">Family</option>
+        <option value="Organization">Organization</option>
+    </select>
+
+    <label for="activeStatus">Active Status</label>
+    <select id="activeStatus" name="activeStatus">
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+    </select>
+
+    <!-- Personal Information -->
+    <label for="firstName">First Name</label>
+    <input type="text" id="firstName" name="firstName" required>
+
+    <label for="lastName">Last Name</label>
+    <input type="text" id="lastName" name="lastName" required>
+
+    <label for="spouse">Spouse/Partner Name</label>
+    <input type="text" id="spouse" name="spouse">
+
+    <label for="organization">Organization Name</label>
+    <input type="text" id="organization" name="organization">
+
+    <label for="email">Email Address</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="1234567890" required>
+
+    <!-- Address Information -->
+    <label for="address">Street Address</label>
+    <input type="text" id="address" name="address" required>
+
+    <label for="city">City</label>
+    <input type="text" id="city" name="city" required>
+
+    <label for="state">State</label>
+    <select id="state" name="state" required>
+        <option value="">--Select--</option>
+        <!-- Add U.S. states -->
+        <option value="NJ">New Jersey</option>
+        <option value="NY">New York</option>
+        <!-- Add other states here -->
+    </select>
+
+    <label for="zip">ZIP Code</label>
+    <input type="text" id="zip" name="zip" pattern="[0-9]{5}" placeholder="5-digit ZIP code" required>
+
+   
+    <div class="checkbox-section">
+        <div class="checkbox-container">
+            <input type="checkbox" id="mailOptIn" name="mailOptIn">
+            <label for="mailOptIn">Opt-In for Physical Mailings</label>
+        </div>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="emailOptIn" name="emailOptIn">
+            <label for="emailOptIn">Opt-In for Email Newsletters</label>
+        </div>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="pollOptIn" name="pollOptIn">
+            <label for="pollOptIn">Opt-In for Polls/Feedback</label>
+        </div>
+    </div>
+
+
+
+    <div class="notes-section"></div>
+        <label for="notes">Additional Notes</label>
+        <textarea id="notes" name="notes" rows="4" placeholder="Enter any additional information..."></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit">Submit</button>
+</form>
+
+<!--javascript-->
+
+<script>
+    const form = document.querySelector('form');
+    const spinner = document.getElementById('spinner');  // Optional spinner
+    const successMessage = document.getElementById('successMessage');  // Success message element
+    const errorMessage = document.getElementById('errorMessage');  // Error message element
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();  // Prevent default form submission
+
+        // Clear previous messages
+        successMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+
+        // Show loading spinner
+        if (spinner) spinner.style.display = 'block';
+
+        // Collect form data
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => (data[key] = value));
+
+        try {
+            const response = await fetch('https://<YOUR_API_GATEWAY_ENDPOINT>/submit-form', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),  // Convert form data to JSON
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                successMessage.innerText = result.message || 'Form submitted successfully!';  // Display success message
+                successMessage.style.display = 'block';
+            } else {
+                const errorData = await response.json();
+                errorMessage.innerText = errorData.message || 'Failed to submit form.';
+                errorMessage.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            errorMessage.innerText = 'Network error: Failed to submit form.';
+            errorMessage.style.display = 'block';
+        } finally {
+            // Hide loading spinner
+            if (spinner) spinner.style.display = 'none';
+        }
+    });
+</script>
+
+
+</body>
+</html>
+
+
